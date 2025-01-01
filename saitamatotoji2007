@@ -32,32 +32,45 @@ UltLabel.Name = "SkibidiRizzlerGyattOhio"
 UltLabel.Parent = magichealth
 task.spawn(function()
     while true do
-     UltLabel.Text = "heveanly toji"
+     UltLabel.Text = "Shadow Abyss"
         for _, slot in ipairs(hotbar:GetChildren()) do
             if slot:FindFirstChild("Base") and slot.Base:FindFirstChild("ToolName") then
                 local toolNameText = slot.Base.ToolName.Text
                 if toolNameText == "Normal Punch" then
-                    cloneToolName(slot.Base, "pure strength")
+                    cloneToolName(slot.Base, "Last Breath")
                 elseif toolNameText == "Consecutive Punches" then
-                    cloneToolName(slot.Base, "heveanly punches")
+                    cloneToolName(slot.Base, "Heaven’s Fang")
                 elseif toolNameText == "Shove" then
-                    cloneToolName(slot.Base, "speed blitz")
+                    cloneToolName(slot.Base, "Shadow Step")
                 elseif toolNameText == "Uppercut" then
-                    cloneToolName(slot.Base, "true uperkick")
+                    cloneToolName(slot.Base, "Stone Fang")
                 elseif toolNameText == "Death Counter" then
-                    cloneToolName(slot.Base, "true strength")
+                    cloneToolName(slot.Base, "Little Hand")
                 elseif toolNameText == "Table Flip" then
-                    cloneToolName(slot.Base, "dropkick")
+                    cloneToolName(slot.Base, "Speed Blitz")
                 elseif toolNameText == "Serious Punch" then
-                    cloneToolName(slot.Base, "bang")
+                    cloneToolName(slot.Base, "Heavenaly Death")
                 elseif toolNameText == "Omni Directional Punch" then
-                    cloneToolName(slot.Base, "heveanly speed")
+                    cloneToolName(slot.Base, "heaveanly speed")
                 end
             end
         end
-        task.wait(1)
+        -- Update Magic Health Health Bar
+        local healthBar = magichealth:FindFirstChild("Health") and magichealth.Health:FindFirstChild("Bar") and magichealth.Health.Bar:FindFirstChild("Bar")
+        if healthBar then
+            healthBar.ImageColor3 = Color3.fromRGB(0, 0, 0) -- Set health bar color to cyan (can change based on context)
+        end
+
+        -- Update the Text Label in the Magic Health frame
+        local textLabel = magichealth:FindFirstChild("TextLabel")
+        if textLabel then
+            textLabel.Text = "Heavenaly"  -- Example of updating the text based on an event
+        end
+
+        task.wait(1)  -- Update every second
     end
 end)
+
 -- Create a ScreenGui
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui")
@@ -80,15 +93,25 @@ watermarkLabel.Parent = screenGui
 watermarkLabel.TextTransparency = 0.8  -- Adjust transparency if needed
 
 
+mouse = game.Players.LocalPlayer:GetMouse()
+tool = Instance.new("Tool")
+tool.RequiresHandle = false
+tool.Name = "Flash Step"
+tool.Activated:connect(function()
+local pos = mouse.Hit+Vector3.new(0,2.5,0)
+pos = CFrame.new(pos.X,pos.Y,pos.Z)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos
+end)
+tool.Parent = game.Players.LocalPlayer.Backpack
 
---[[Animations]]
+
 
 --[[1 move]]
 -- Define animation ID to listen for
 local animationId = 10468665991
 
--- Define the animation speed (you can change this to adjust speed)
-local animationSpeed = 2.4 -- Change this value to adjust the speed
+-- Define the animation speed for 18440389930
+local animationSpeedFor18440389930 = 1.4
 
 -- Get the player and their character
 local player = game.Players.LocalPlayer
@@ -106,20 +129,38 @@ local function onAnimationPlayed(animationTrack)
             animTrack:Stop()
         end
 
-        -- Load a new animation
+        -- Randomly choose between the two animations
+        local randomChoice = math.random(1, 2) -- 1 or 2
+        local chosenAnimationId
+        local chosenStartTime = 0 -- Default start time
+
+        if randomChoice == 1 then
+            chosenAnimationId = "rbxassetid://18440389930"
+            chosenStartTime = 1 -- Start time for the first animation
+        else
+            chosenAnimationId = "rbxassetid://18464372850"
+            chosenStartTime = 2 -- Start time for the second animation
+        end
+
+        -- Load the chosen animation
         local newAnim = Instance.new("Animation")
-        newAnim.AnimationId = "rbxassetid://18440389930"
+        newAnim.AnimationId = chosenAnimationId
         local animTrack = humanoid:LoadAnimation(newAnim)
 
-        -- Set the start time and play the animation
-        local startTime = 1
-        animTrack.TimePosition = startTime
+        -- Play the animation
         animTrack:Play()
 
-        -- Adjust the speed of the animation based on the animationSpeed variable
-        animTrack:AdjustSpeed(animationSpeed)
+        -- Set the start time after playing
+        delay(0.01, function()
+            animTrack.TimePosition = chosenStartTime
+        end)
 
-        -- After 2 seconds, stop the animation and reset its position to the start
+        -- Apply speed adjustment only to 18440389930
+        if chosenAnimationId == "rbxassetid://18440389930" then
+            animTrack:AdjustSpeed(animationSpeedFor18440389930)
+        end
+
+        -- After a delay, stop the animation and reset its position to the start
         delay(0.9, function()
             animTrack:Stop()
             animTrack.TimePosition = 0 -- Reset to the start
@@ -129,6 +170,9 @@ end
 
 -- Connect the function to the AnimationPlayed event
 humanoid.AnimationPlayed:Connect(onAnimationPlayed)
+
+
+
 
 
 
@@ -195,6 +239,7 @@ local animationId = 10471336737
 local randomAnimationIds = {
     
      "rbxassetid://17838619895"
+     
 }
 
 local player = Players.LocalPlayer
@@ -233,17 +278,62 @@ humanoid.AnimationPlayed:Connect(onAnimationPlayed)
 
 
 
+--[[move 4]]
+-- Define animation IDs
+local triggerAnimationId = 12510170988 -- The animation that triggers this sequence
+local firstAnimationId = 13633468484 -- First animation to play
+local secondAnimationId = 18179181663 -- Second animation to play
 
+-- Get the player and their character
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
 
+-- Get the humanoid from the character
+local humanoid = character:WaitForChild("Humanoid")
 
+-- Function to play animations in sequence
+local function playSequentialAnimations()
+    -- Play the first animation
+    local firstAnim = Instance.new("Animation")
+    firstAnim.AnimationId = "rbxassetid://" .. firstAnimationId
+    local firstAnimTrack = humanoid:LoadAnimation(firstAnim)
 
+    firstAnimTrack:Play()
+    firstAnimTrack.TimePosition = 1.5 -- Adjust TimePosition *after* playing the animation
+    firstAnimTrack:AdjustSpeed(0.5) -- Set playback speed to normal
 
+    -- Stop the first animation after 1 second and play the second animation
+    task.delay(0.4, function()
+        firstAnimTrack:Stop()
 
---[[4 move]]
+        local secondAnim = Instance.new("Animation")
+        secondAnim.AnimationId = "rbxassetid://" .. secondAnimationId
+        local secondAnimTrack = humanoid:LoadAnimation(secondAnim)
 
+        secondAnimTrack:Play()
+        secondAnimTrack:AdjustSpeed(1) -- Set playback speed to normal
+    end)
+end
 
+-- Function to handle animations being played
+local function onAnimationPlayed(animationTrack)
+    if animationTrack.Animation.AnimationId == "rbxassetid://" .. triggerAnimationId then
+        -- Stop all currently playing animations
+        for _, animTrack in pairs(humanoid:GetPlayingAnimationTracks()) do
+            animTrack:Stop()
+        end
+
+        -- Play the animations in sequence
+        playSequentialAnimations()
+    end
+end
+
+-- Connect the function to the AnimationPlayed event
+humanoid.AnimationPlayed:Connect(onAnimationPlayed)
+
+--[[ult move]]
 -- Define animation ID to listen for
-local animationId = 12510170988
+local animationId = 12447707844
 
 -- Get the player and their character
 local player = game.Players.LocalPlayer
@@ -261,285 +351,247 @@ local function onAnimationPlayed(animationTrack)
             animTrack:Stop()
         end
 
-        -- Load a new animation
+        -- Load the new animation (animation ID 16431491215)
         local newAnim = Instance.new("Animation")
-        newAnim.AnimationId = "rbxassetid://18464372850"
+        newAnim.AnimationId = "rbxassetid://16431491215"
         local animTrack = humanoid:LoadAnimation(newAnim)
 
         -- Set the start time and adjust the speed
-        local startTime = 1
-        animTrack:Play()
-        animTrack:AdjustSpeed(1.9)
-        animTrack.TimePosition = startTime
-        animTrack:AdjustSpeed(1.9) -- You already set speed to 2, so this line can be optional
-    end
-end
-
--- Connect the function to the AnimationPlayed event
-humanoid.AnimationPlayed:Connect(onAnimationPlayed)
-
-
---[[Dash]]
-
-local animationId = 10479335397 -- The animation ID to listen for
-local player = game.Players.LocalPlayer -- Get the player
-local character = player.Character or player.CharacterAdded:Wait() -- Get the player's character
-local humanoid = character:WaitForChild("Humanoid") -- Get the humanoid
-
--- Function to handle the played animation
-local function onAnimationPlayed(animationTrack)
-    -- Check if the played animation matches the desired animation ID
-    if animationTrack.Animation.AnimationId == "rbxassetid://" .. animationId then
-        -- Stop all currently playing animations
-        for _, animTrack in pairs(humanoid:GetPlayingAnimationTracks()) do
-            animTrack:Stop()
-        end
-
-        -- Load and play the new animation
-        local newAnim = Instance.new("Animation")
-        newAnim.AnimationId = "rbxassetid://17838006839" -- Dash animation ID
-        local animTrack = humanoid:LoadAnimation(newAnim)
-
-        -- Set the start time and play the animation
         local startTime = 0
-        animTrack.TimePosition = startTime
         animTrack:Play()
-
-        -- Adjust the speed of the animation
-        animTrack:AdjustSpeed(1.3) -- Set your desired speed
-
-        -- Stop the animation after 1.8 seconds
-        delay(1.8, function()
-            animTrack:Stop()
-        end)
-    end
-end
-
--- Connect the function to the AnimationPlayed event
-humanoid.AnimationPlayed:Connect(onAnimationPlayed)
-
-
---[[Ult Activation]]
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage") -- For chat service
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-
-local animationId = 12447707844 -- The main animation to detect
-
--- List of animation IDs to choose from
-local animationIds = {
-    18435303746, -- Example Animation ID 1
-    14611879113 -- This is the animation that triggers the specific chat message
-    
-}
-
--- Sound IDs
-local soundId = "rbxassetid://1837466004" -- Sound for other animations
-local loseSoundId = "rbxassetid://102952461837240" -- Sound for the losing animation
-
--- List of possible chat messages for the winning animation
-local chatMessages = {
-    "I killed Satoru Gojo.",
-    "Im Going to lose? Our fight is just getting started",
-    "I'm not a Zen'in anymore.",
-    "It's Fushiguro now.",
-    "Count me in."
-}
-
--- Function to get a random chat message
-local function getRandomChatMessage()
-    return chatMessages[math.random(1, #chatMessages)]
-end
-
--- Function to send a message in the chat
-local function sendChatMessage(message)
-    local chatEvent = ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
-    chatEvent:FireServer(message, "All")
-end
-
--- Flag to ensure only one message is sent per animation trigger
-local messageSent = false
-
--- Function to handle when the animation is played
-local function onAnimationPlayed(animationTrack)
-    if animationTrack.Animation.AnimationId == "rbxassetid://" .. animationId and not messageSent then
-        messageSent = true  -- Set the flag to prevent further messages for this trigger
-        
-        -- Stop all currently playing animations    
-        for _, animTrack in pairs(humanoid:GetPlayingAnimationTracks()) do
-            animTrack:Stop()
-        end
-
-        -- Create and load a random animation from the list
-        local randomAnimationId = animationIds[math.random(1, #animationIds)]
-        local AnimAnim = Instance.new("Animation")
-        AnimAnim.AnimationId = "rbxassetid://" .. randomAnimationId
-        local Anim = humanoid:LoadAnimation(AnimAnim)
-
-        -- Play the random animation
-        Anim:Play()
-        Anim:AdjustSpeed(1) -- Adjust the speed of the animation (optional)
+        animTrack:AdjustSpeed(0.4)
+        animTrack.TimePosition = startTime
 
         -- Create and play the sound
         local sound = Instance.new("Sound")
-        sound.SoundId = soundId
-        sound.Parent = character -- Attach the sound to the character
+        sound.SoundId = "rbxassetid://100350988369933"
+        sound.Volume = 10
+        sound.Looped = false
+        sound.Parent = character.HumanoidRootPart -- Attach sound to HumanoidRootPart
         sound:Play()
 
-        -- Stop the sound after 20 seconds or when animation stops
-        task.delay(20, function()
-            if sound then
-                sound:Stop()
-                sound:Destroy()
+        -- Create a shadow effect (cube-shaped)
+        local shadow = Instance.new("Part")
+        shadow.Size = Vector3.new(20, 1, 20) -- Flat, thin cube shape
+        shadow.Position = character.HumanoidRootPart.Position - Vector3.new(0, 0.1, 0) -- Slightly above the ground
+        shadow.Anchored = true
+        shadow.CanCollide = false
+        shadow.Material = Enum.Material.SmoothPlastic
+        shadow.Color = Color3.fromRGB(0, 0, 0) -- Black color for the shadow
+        shadow.Parent = workspace
+
+        -- Create the particle effect and attach it to the shadow (HumanoidRootPart)
+        local Test = game.ReplicatedStorage.Emotes.BackgroundCrashoutVfx.Background
+        local test = Test:Clone() -- Clone the effect
+        test.Parent = shadow -- Parent it to the shadow part
+
+        -- Emit the particles
+        for _, child in ipairs(test:GetChildren()) do
+            if child:IsA("ParticleEmitter") then
+                child:Emit(15)
+                child.Enabled = true
             end
+        end
+
+        -- After 1.5 seconds, move the shadow up by 25 studs
+        delay(2, function()
+            -- Move the shadow up 25 studs
+            local originalPosition = shadow.Position
+            local targetPosition = originalPosition + Vector3.new(0, 27, 0)
+            shadow.CFrame = CFrame.new(targetPosition)
+
+            -- Wait for 1 second and then delete the shadow
+            delay(2, function()
+                shadow:Destroy() -- Destroy the shadow after 1 second
+            end)
         end)
 
-        -- Send a single random message to the chat
-        sendChatMessage(getRandomChatMessage())
+        -- After 2 seconds, move the player up and then slowly bring them down smoothly
+        delay(2, function()
+            -- Get the current position of the player
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
-        -- Reset the messageSent flag after animation and sound have finished
-        Anim.Stopped:Connect(function()
-            messageSent = false  -- Reset the flag to allow a new message
+            -- Move the player 20 studs up
+            local originalPosition = humanoidRootPart.Position
+            local targetPosition = originalPosition + Vector3.new(0, 40, 0)
+            humanoidRootPart.CFrame = CFrame.new(targetPosition)
+
+            -- Smoothly bring the player back down to the original position using TweenService
+            local tweenService = game:GetService("TweenService")
+            local tweenInfo = TweenInfo.new(
+                2.5, -- Time duration for descending (in seconds)
+                Enum.EasingStyle.Quint, -- Easing style for a smooth descent
+                Enum.EasingDirection.Out, -- Easing direction, causing the descent to slow down towards the end
+                0, -- Repeat count, 0 means it doesn't repeat
+                false, -- Reverses the tween after it finishes (not in this case)
+                0 -- Delay time before the tween starts (no delay here)
+            )
+
+            -- Create the goal for the player's descent (their original position)
+            local tweenGoal = {CFrame = CFrame.new(originalPosition)}
+
+            -- Create the tween
+            local descentTween = tweenService:Create(humanoidRootPart, tweenInfo, tweenGoal)
+            descentTween:Play()
+
+            -- Wait until the descent is finished
+            descentTween.Completed:Wait()
+
+            -- Ensure the player is back to the original position after descent
+            humanoidRootPart.CFrame = CFrame.new(originalPosition)
         end)
-    elseif animationTrack.Animation.AnimationId == "rbxassetid://14611879113" and not messageSent then
-        messageSent = true  -- Set the flag to prevent further messages for this trigger
-        sendChatMessage("Am I going to lose?")
 
-        -- Create and play the sound for this animation
-        local loseSound = Instance.new("Sound")
-        loseSound.SoundId = loseSoundId
-        loseSound.Parent = character -- Attach the sound to the character
-        loseSound:Play()
+        -- Delay for 2 seconds before playing the next animation (animation ID 17106169665)
+        delay(1.8, function()
+            -- Load the next animation (animation ID 17106169665)
+            local nextAnim = Instance.new("Animation")
+            nextAnim.AnimationId = "rbxassetid://17106169665"
+            local nextAnimTrack = humanoid:LoadAnimation(nextAnim)
 
-        -- Reset the messageSent flag when loseSound ends
-        loseSound.Ended:Connect(function()
-            loseSound:Destroy()
-            messageSent = false  -- Reset the flag to allow a new message
+            -- Set the speed to 1
+            nextAnimTrack:Play()
+            nextAnimTrack:AdjustSpeed(3)
+
+            -- Stop the animation after 2 seconds
+            delay(1.5, function()
+                nextAnimTrack:Stop() -- Stop the animation after 2 seconds
+            end)
         end)
     end
 end
 
 -- Connect the function to the AnimationPlayed event
 humanoid.AnimationPlayed:Connect(onAnimationPlayed)
+
+
+
+
+
 
 
 
 --[[Wall combo]]
+-- Define animation IDs
+local triggerAnimationId = 15955393872 -- The animation that triggers this sequence
+local firstAnimationId = 13633468484 -- First animation to play (speed will be adjusted)
+local secondAnimationId = 16139108718 -- Second animation to play (TimePosition only)
 
-
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
+-- Get the player and their character
+local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
+
+-- Get the humanoid from the character
 local humanoid = character:WaitForChild("Humanoid")
 
--- Animation ID to listen for
-local animationId = 15955393872
+-- Function to create and play an animation
+local function createAndPlayAnimation(animationId, timePosition, playbackSpeed)
+    local animation = Instance.new("Animation")
+    animation.AnimationId = "rbxassetid://" .. animationId
+    local animationTrack = humanoid:LoadAnimation(animation)
 
--- Replacement animation ID
-local replacementAnimationId = 15943915877
+    -- Set where the animation should start
+    if timePosition then
+        animationTrack.TimePosition = timePosition
+    end
 
--- Function to handle when an animation is played
+    animationTrack:Play()
+    
+    -- Apply playback speed only if specified
+    if playbackSpeed then
+        animationTrack:AdjustSpeed(playbackSpeed)
+    end
+
+    return animationTrack
+end
+
+-- Function to play animations in sequence
+local function playSequentialAnimations()
+    -- Play the first animation starting at TimePosition 0.5 with speed adjustment
+    local firstAnimTrack = createAndPlayAnimation(firstAnimationId, 0.5, 2) -- Playback speed = 2
+
+    -- Stop the first animation after 1 second and play the second animation
+    task.delay(1, function()
+        firstAnimTrack:Stop()
+
+        -- Play the second animation starting at TimePosition 3 without speed adjustment
+        createAndPlayAnimation(secondAnimationId, 2)
+    end)
+end
+
+-- Function to handle animations being played
 local function onAnimationPlayed(animationTrack)
-    -- Check if the played animation matches the specified animation ID
-    if animationTrack.Animation.AnimationId == "rbxassetid://" .. animationId then
-        print("Detected animation: " .. animationId) -- Debug message
-
+    if animationTrack.Animation.AnimationId == "rbxassetid://" .. triggerAnimationId then
         -- Stop all currently playing animations
         for _, animTrack in pairs(humanoid:GetPlayingAnimationTracks()) do
-            print("Stopping animation: " .. animTrack.Animation.AnimationId) -- Debug message
             animTrack:Stop()
         end
 
-        -- Load the replacement animation
-        local AnimAnim = Instance.new("Animation")
-        AnimAnim.AnimationId = "rbxassetid://" .. replacementAnimationId
-        local Anim = humanoid:LoadAnimation(AnimAnim)
-
-        -- Play the replacement animation
-        local startTime = 1
-        Anim:Play()
-        Anim.TimePosition = startTime
-        Anim:AdjustSpeed(0.7) -- Set the speed of the animation
-
-        print("Playing replacement animation: " .. replacementAnimationId) -- Debug message
-
-        -- Optionally, stop the replacement animation after a delay (if needed)
-        -- Replace '5' with the desired duration (in seconds)
-        task.delay(5, function()
-            if Anim.IsPlaying then
-                Anim:Stop()
-                print("Stopped replacement animation after delay.")
-            end
-        end)
+        -- Play the animations in sequence
+        playSequentialAnimations()
     end
 end
 
 -- Connect the function to the AnimationPlayed event
 humanoid.AnimationPlayed:Connect(onAnimationPlayed)
 
-print("Animation replacement script initialized.") 
 
 
---[[1 ult move]]
+-- 1 ult move
 -- ID of the animation that triggers the custom behavior
-local animationId = 18715881168
+local animationId = 11343318134
 
 -- Get the local player and their character
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 
--- Variable to track if the message has been sent
-local messageSent = true
+-- Function to make the player say something in the chat
+local function sayInChat(message)
+    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+end
 
--- Function that runs when any animation is played
+-- Function that runs when the triggering animation is played
 local function onAnimationPlayed(animationTrack)
     -- Check if the played animation matches the target animationId
     if animationTrack.Animation.AnimationId == "rbxassetid://" .. animationId then
-        -- Check if the message has already been sent
-        if not messageSent then
-            -- Send a message in the chat
-            game:GetService("Chat"):Chat(player.Character.Head, "But you guys, with all your blessed talents, lost to a monkey like me who can’t even use Jujutsu.", Enum.ChatColor.Blue)
-
-            -- Set the messageSent variable to true to prevent further messages
-            messageSent = true
-        end
-
         -- Stop all currently playing animations
         for _, animTrack in pairs(humanoid:GetPlayingAnimationTracks()) do
             animTrack:Stop()
         end
 
-        -- Create a new animation instance for the new animation
+        -- Play the ultimate move animation
         local newAnimation = Instance.new("Animation")
-        newAnimation.AnimationId = "rbxassetid://16746824621"
+        newAnimation.AnimationId = "rbxassetid://17861844708"
 
         -- Load and play the new animation
         local animTrack = humanoid:LoadAnimation(newAnimation)
         animTrack:Play()
 
-        -- Adjust the speed to make the animation very slow (0.1x speed for 10% speed)
-        animTrack:AdjustSpeed(0.2) -- Slows down the animation to 10% of its normal speed
+        -- Adjust the speed to make the animation very slow (0.3x speed)
+        animTrack:AdjustSpeed(0.3)
 
-        -- Connect the 'Stopped' event to know when to stop the animation manually
-        animTrack.Stopped:Connect(function()
-            animTrack:Stop()
+        -- Send the first chat message
+        sayInChat("Who do you think you are?")
+
+        -- Wait 1 second, then send the second chat message
+        task.delay(1.5, function()
+            sayInChat("I kill sorcerers are you not one of them?")
         end)
 
-        -- Stop the animation after a certain time using `RunService` for frame updates.
-        local startTime = tick()  -- Get current time
-        game:GetService("RunService").RenderStepped:Connect(function()
-            if tick() - startTime >= 7.2 then -- Increase the time to match the slower speed
-                animTrack:Stop()  -- Stop the animation after 7.2 seconds (since it's very slow)
-            end
+        -- Stop the animation after 7.2 seconds
+        task.delay(7.2, function()
+            animTrack:Stop()
         end)
     end
 end
 
 -- Connect the function to the humanoid's AnimationPlayed event
 humanoid.AnimationPlayed:Connect(onAnimationPlayed)
+
+
+
+
+
 
 
 
@@ -681,7 +733,7 @@ local function onAnimationPlayed(animationTrack)
 
         -- Create a new animation instance for the new animation
         local newAnimation = Instance.new("Animation")
-        newAnimation.AnimationId = "rbxassetid://18464372850"
+        newAnimation.AnimationId = "rbxassetid://18179181663"
 
         -- Load and play the new animation
         local animTrack = humanoid:LoadAnimation(newAnimation)
@@ -815,102 +867,6 @@ humanoid.AnimationPlayed:Connect(onAnimationPlayed)
 print("Animation handler script initialized.") -- Debug message
 
 
---[[side dash]]
-
-local animationId = 10480796021  -- Declare animationId once
-
--- Get the local player
-local player = game.Players.LocalPlayer
-
--- Wait for the player's character to load
-local character = player.Character or player.CharacterAdded:Wait()
-
--- Get the humanoid object from the character
-local humanoid = character:WaitForChild("Humanoid")
-
--- Function to handle when any animation is played
-local function onAnimationPlayed(animationTrack)
-    -- Check if the animation ID matches the one you're looking for
-    if animationTrack.Animation.AnimationId == "rbxassetid://" .. animationId then
-        -- Stop all currently playing animations
-        for _, animTrack in pairs(humanoid:GetPlayingAnimationTracks()) do
-            animTrack:Stop()
-        end
-
-        -- Create a new animation object with the new animation ID
-        local newAnimation = Instance.new("Animation")
-        newAnimation.AnimationId = "rbxassetid://15957361339"
-
-        -- Load the animation into the humanoid
-        local newAnimTrack = humanoid:LoadAnimation(newAnimation)
-
-        -- Optional: Adjust the animation speed and start time
-        local startTime = 0
-        newAnimTrack:Play()
-        newAnimTrack:AdjustSpeed(1)
-        newAnimTrack.TimePosition = startTime
-
-        -- Add particle effect
-        local particleEmitter = Instance.new("ParticleEmitter")
-        particleEmitter.Texture = "rbxassetid://1234567890"  -- Replace with your particle texture ID
-        particleEmitter.Parent = character.Head  -- Attach to the player's head (or any other part)
-        particleEmitter.Rate = 50  -- Number of particles per second
-        particleEmitter.Lifetime = NumberRange.new(1, 2)  -- How long particles last
-        particleEmitter.Speed = NumberRange.new(5, 10)  -- Speed of the particles
-        particleEmitter:Emit(100)  -- Emit 100 particles once
-    end
-end
-
--- Connect the function to the AnimationPlayed event
-humanoid.AnimationPlayed:Connect(onAnimationPlayed)
-
-
-local animationId = 10480793962  -- Declare animationId once
-
--- Get the local player
-local player = game.Players.LocalPlayer
-
--- Wait for the player's character to load
-local character = player.Character or player.CharacterAdded:Wait()
-
--- Get the humanoid object from the character
-local humanoid = character:WaitForChild("Humanoid")
-
--- Function to handle when any animation is played
-local function onAnimationPlayed(animationTrack)
-    -- Check if the animation ID matches the one you're looking for
-    if animationTrack.Animation.AnimationId == "rbxassetid://" .. animationId then
-        -- Stop all currently playing animations
-        for _, animTrack in pairs(humanoid:GetPlayingAnimationTracks()) do
-            animTrack:Stop()
-        end
-
-        -- Create a new animation object with the new animation ID
-        local newAnimation = Instance.new("Animation")
-        newAnimation.AnimationId = "rbxassetid://15957361339"
-
-        -- Load the animation into the humanoid
-        local newAnimTrack = humanoid:LoadAnimation(newAnimation)
-
-        -- Optional: Adjust the animation speed and start time
-        local startTime = 0
-        newAnimTrack:Play()
-        newAnimTrack:AdjustSpeed(1)
-        newAnimTrack.TimePosition = startTime
-
-        -- Add particle effect
-        local particleEmitter = Instance.new("ParticleEmitter")
-        particleEmitter.Texture = "rbxassetid://1234567890"  -- Replace with your particle texture ID
-        particleEmitter.Parent = character.Head  -- Attach to the player's head (or any other part)
-        particleEmitter.Rate = 50  -- Number of particles per second
-        particleEmitter.Lifetime = NumberRange.new(1, 2)  -- How long particles last
-        particleEmitter.Speed = NumberRange.new(5, 10)  -- Speed of the particles
-        particleEmitter:Emit(100)  -- Emit 100 particles once
-    end
-end
-
--- Connect the function to the AnimationPlayed event
-humanoid.AnimationPlayed:Connect(onAnimationPlayed)
 
 
 
@@ -959,13 +915,13 @@ local animationIdsToStop = {
 
 local replacementAnimations = {
 
-    ["10469493270"] = "rbxassetid://17889458563", --punch1
+    ["10469493270"] = "rbxassetid://13491635433", --punch1
 
-    ["10469630950"] = "rbxassetid://17889461810", --punch2
+    ["10469630950"] = "rbxassetid://13532600125", --punch2
 
-    ["10469639222"] = "rbxassetid://17889471098", --punch3
+    ["10469639222"] = "rbxassetid://13295919399", --punch3
 
-    ["10469643643"] = "rbxassetid://17889461810", --punch4
+    ["10469643643"] = "rbxassetid://16552234590", --punch4
 
     ["17859015788"] = "rbxassetid://12684185971", --punch idk
 
@@ -1434,4 +1390,3 @@ end)
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui")
 local watermarkLabel = Instance.new("TextLabel")
-
